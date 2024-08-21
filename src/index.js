@@ -38,13 +38,25 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-    return expr
-        .split('**********')
-        .map((str) => str.match(/.{10}/g)
-            .map((str) => str.replaceAll('00', '').replaceAll('10', '.').replaceAll('11', '-'))
-            .reduce((acc, str) => acc + MORSE_TABLE[str], '')
-        )
-        .join(' ');
+    let result = '';
+
+    for (let i = 0; i < expr.length; i += 10) {
+        const chunk = expr.slice(i, i + 10);
+
+        if (chunk === '**********') {
+            result += ' ';
+        } else {
+            let morseSymbol = '';
+            for (let j = 0; j < 10; j += 2) {
+                const symbol = chunk.slice(j, j + 2);
+                if (symbol === '10') morseSymbol += '.';
+                if (symbol === '11') morseSymbol += '-';
+            }
+            result += MORSE_TABLE[morseSymbol];
+        }
+    }
+
+    return result;
 }
 
 module.exports = {
